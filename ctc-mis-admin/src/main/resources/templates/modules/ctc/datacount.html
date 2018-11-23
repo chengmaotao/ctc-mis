@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>钱包统计表</title>
+		<#include "/header.html">
+</head>
+<body>
+<!-- 数据总量 -->
+
+<table class="dataCountcls">
+	<tr><td colspan="3" class="boldLabel">注册用户总数</td><td colspan="3" class="boldLabel">钱包地址总数</td></tr>
+	<tr><td colspan="3" id="customerNum"></td><td colspan="3" id="walletAddressNum"></td></tr>
+    <tr><td colspan="6"></td></tr>
+	<tr><td colspan="2" class="boldLabel">交易总量</td><td colspan="2" class="boldLabel">交易总笔数</td><td colspan="2" class="boldLabel">交易地址数</td></tr>
+	<tr><td colspan="2" id="transactionAmountNum"></td><td colspan="2" id="transactionNum"></td><td colspan="2" id="transactionAddressNum"></td></tr>
+</table>
+
+
+<script src="${request.contextPath}/statics/js/modules/ctc/datacount.js?_${.now?long}"></script>
+</body>
+</html>

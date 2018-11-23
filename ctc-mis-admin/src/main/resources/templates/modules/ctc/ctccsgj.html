@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CTC  财神管家的响应表</title>
+		<#include "/header.html">
+</head>
+<!-- 信用报告购买次数明细 -->
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<div class="form-group col-sm-8">
+                <input type="text" class="ctc-form-control" placeholder="开始日期" id="beginDateId">
+                <input type="text" class="ctc-form-control" placeholder="结束日期" id="endDateId">
+                <input type="text" class="ctc-form-control" placeholder="用户ID" id="customerId">
+                <input type="text" class="ctc-form-control" placeholder="手机号" id="username">
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+        </div>
+        
+       
+        <table id="jqGrid"></table>
+         <div>
+        	<span id="userCount">累计用户：0</span>
+       		<span id="buyCount">累计数量 ：0</span>
+       		<span id="moneyCount">累计金额 ：0</span>
+       		<span id="ctcCount">累计CTC数量  ：0</span>
+        </div>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/ctccsgj.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/test/ctcdate.js"></script>
+</body>
+</html>

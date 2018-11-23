@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.CtcCsgjDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.CtcCsgjEntity" id="ctcCsgjMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="cid" column="cid"/>
+        <result property="ctcDetailId" column="ctc_detail_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="goods" column="goods"/>
+        <result property="number" column="number"/>
+        <result property="amount" column="amount"/>
+        <result property="date" column="date"/>
+         <result property="price" column="price"/>
+    </resultMap>
+
+
+	<!-- 信用报告购买次数明细 -->
+	<select id="withdraworderlist" resultType="io.credittag.mis.modules.ctc.entity.CtcCsgjEntity" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+			a.create_time as "createTime",
+			a.cid as cid,
+			a.order_no as orderNo,
+			a.goods as goods,
+			a.number as number,
+			a.amount as amount,
+			a.date as date,
+			a.amount/a.number as price,
+			b.amount as ctcAmount,
+			c.username as username
+		FROM ctc_csgj a
+		join customer c on c.id = a.cid
+		left JOIN ctc_detail b ON a.ctc_detail_id = b.id	
+		
+			
+		ORDER BY
+			a.create_time desc
+	</select>
+	
+	<!-- 信用报告购买次数明细的统计 -->
+	<select id="withdraworderlistTotal"
+		resultType="io.credittag.mis.modules.ctc.entity.CtcCsgjEntity"
+		parameterType="map">
+		select  count(distinct cid) as cid, sum(number) , sum(amount), sum(ctcAmount) from (
+		SELECT
+			a.create_time as "createTime",
+			a.cid as cid,
+			a.order_no as orderNo,
+			a.goods as goods,
+			a.number as number,
+			a.amount as amount,
+			a.date as date,
+			a.amount/a.number as price,
+			b.amount as ctcAmount,
+			c.username as username
+		FROM ctc_csgj a
+		join customer c on c.id = a.cid
+		left JOIN ctc_detail b ON a.ctc_detail_id = b.id
+		${ew.sqlSegment} 
+
+		ORDER BY
+		a.create_time desc
+		) d
+	</select>
+	
+	<!-- 完成任务的用户数 （按照日期分组） -->
+	<select id="seleteCompleteCustomer" parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity" resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+		SELECT
+			count(t.cid) completeCustomer,
+			t.voStrDate
+		FROM
+			(
+				SELECT
+					substring(
+						date_add(create_time, INTERVAL 8 HOUR),
+						1,
+						10
+					) AS voStrDate,
+					cid
+				FROM
+					ctc_csgj
+				where create_time &gt;= #{paramMinDate} and create_time &lt;= #{paramMaxDate}
+				GROUP BY
+					voStrDate,
+					cid
+			) t
+		GROUP BY
+			t.voStrDate
+	</select>
+	
+		<!-- 完成任务次数  按照日期分组 -->
+	<select id="selectCompleteCount" parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity" resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+		SELECT
+			substring(
+				date_add(create_time, INTERVAL 8 HOUR),
+				1,
+				10
+			) AS voStrDate,
+			count(*) AS completeCount
+		FROM
+			ctc_csgj 
+		where create_time &gt;= #{paramMinDate} and create_time &lt;= #{paramMaxDate}
+		GROUP BY
+			voStrDate
+	</select>
+	<select id="totalUserDetailDayForAmount" resultType="map" parameterType="map">
+	select sum(amount) as amount, count(distinct cid) as customer,count(*) as count
+	from 
+	ctc_csgj
+	where 
+	1=1 
+	<if test="begin != null and ''!=begin">
+	and create_time &gt;= #{begin}
+	</if>
+	<if test="end !=null and ''!=end">
+	and create_time &lt; #{end}
+	</if>
+	
+	</select>
+</mapper>

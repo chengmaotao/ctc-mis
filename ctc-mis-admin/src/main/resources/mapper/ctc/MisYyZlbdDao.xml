@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.MisYyZlbdDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.MisYyZlbdEntity" id="misYyZlbdMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="channel" column="channel"/>
+        <result property="time" column="time"/>
+        <result property="url" column="url"/>
+        <result property="language" column="language"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+    
+    <select id="queryPage" resultType="io.credittag.mis.modules.ctc.entity.MisYyZlbdEntity" 
+    parameterType = "com.baomidou.mybatisplus.mapper.EntityWrapper">
+    select id,title,channel,time,url,language,create_time,update_time from 
+    mis_yy_zlbd
+    ${ew.sqlSegment}
+    </select>
+    
+    <select id="findByIdSelf" resultType="io.credittag.mis.modules.ctc.entity.MisYyZlbdEntity"  parameterType="long">
+    select id,title,channel,time,url,language,create_time,update_time from 
+    mis_yy_zlbd
+    where id= #{id}
+    </select>
+
+
+</mapper>

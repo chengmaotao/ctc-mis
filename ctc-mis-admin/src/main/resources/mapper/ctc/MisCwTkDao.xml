@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.MisCwTkDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.MisCwTkEntity" id="misCwTkMap">
+        <result property="id" column="id"/>
+        <result property="telno" column="telNo"/>
+        <result property="name" column="name"/>
+        <result property="bankno" column="bankNo"/>
+        <result property="bankbanchname" column="bankBanchName"/>
+        <result property="ctcamount" column="ctcAmount"/>
+        <result property="price" column="price"/>
+        <result property="mainaddress" column="mainAddress"/>
+        <result property="subaddress" column="subAddress"/>
+        <result property="wxAppid" column="wx_appid"/>
+        <result property="wxNickname" column="wx_nickname"/>
+        <result property="tStatus" column="t_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>

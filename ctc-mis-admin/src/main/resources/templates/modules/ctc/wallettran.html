@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>閽卞寘浜ゆ槗琛�</title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<div class="form-group col-sm-4">
+                <input type="text" class="ctc-form-control" placeholder="开始日期" id="beginDateId">
+                <input type="text" class="ctc-form-control" placeholder="结束日期" id="endDateId">
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div style="text-align:left">
+        	<span id="free">累计交易手续费 :0</span>
+       		<span id="amt">累计交易金额:0</span>
+        </div>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+
+<script src="${request.contextPath}/statics/js/modules/ctc/wallettran.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/test/ctcdate.js"></script>
+</body>
+</html>

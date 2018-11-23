@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.WithdrawOrderDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.WithdrawOrderEntity" id="withdrawOrderMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="cid" column="cid"/>
+        <result property="orderId" column="order_id"/>
+        <result property="currency" column="currency"/>
+        <result property="amount" column="amount"/>
+        <result property="toAddress" column="to_address"/>
+        <result property="status" column="status"/>
+        <result property="statusMsg" column="status_msg"/>
+        <result property="outsideOrderId" column="outside_order_id"/>
+        <result property="finishTime" column="finishTime"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+
+	<!-- 提现明细 -->
+	<select id="withdraworderlist" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper" resultType="io.credittag.mis.modules.ctc.entity.WithdrawOrderEntity">
+		select 
+			a.create_time as createTime,
+			a.cid as cid,
+			a.amount as amount,
+			a.to_address as toAddress,
+			a.`status` as status,
+			a.finish_time as finishTime,
+			c.username as username
+	from withdraw_order a join customer c on a.cid = c.id
+	 ${ew.sqlSegment} 
+	order by a.create_time desc
+	
+	</select>
+	<!-- 统计 -->
+	<select id="withdraworderlistTotal" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper" resultType="io.credittag.mis.modules.ctc.entity.WithdrawOrderEntity">
+		select count(distinct cid) as cid , sum(amount) as amount from (
+			select 
+				a.create_time as createTime,
+				a.cid as cid,
+				a.amount as amount,
+				a.to_address as toAddress,
+				a.`status` as status,
+				a.finish_time as finishTime,
+				c.username as username
+			from withdraw_order a join customer c on a.cid = c.id
+			 ${ew.sqlSegment} 
+			order by a.create_time desc
+		) a
+	
+	</select>
+	
+	<!-- 提取成功用户数 -->
+	<select id="selectWithdrawCustomer" parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity" resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+		SELECT
+			t.voStrDate,
+			count(cid) as withdrawCustomer
+		FROM
+			(
+				SELECT
+					substring(
+						date_add(create_time, INTERVAL 8 HOUR),
+						1,
+						10
+					) AS voStrDate,
+					cid
+				FROM
+					withdraw_order
+				WHERE
+					STATUS = 'S'
+				and finish_time &gt;= #{paramMinDate} and finish_time &lt;= #{paramMaxDate}
+				GROUP BY
+					voStrDate,
+					cid
+			) t
+		GROUP BY
+			t.voStrDate
+	</select>
+	
+	<!-- 提现成功次数 和 提现CTC总量 -->
+	<select id="selectWithdrawCountAndCtcNum" parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity" resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+		SELECT
+			substring(
+				date_add(create_time, INTERVAL 8 HOUR),
+				1,
+				10
+			) AS voStrDate,
+			count(id) AS withdrawNum,
+			sum(amount) AS withdrawCtcNum
+		FROM
+			withdraw_order
+		WHERE
+			STATUS = 'S'
+		 and finish_time &gt;= #{paramMinDate} and finish_time &lt;= #{paramMaxDate}
+		GROUP BY
+			voStrDate
+	
+	</select>
+	<select id="sumCTC" resultType = "map" parameterType = "map">
+	select count(*)  as count ,sum(amount) as amount,count(distinct cid) as drawusers from withdraw_order
+	where 
+	status = 'S'
+	<if test="begin !=null and ''!=begin">
+	and create_time &gt;= #{begin}
+	</if>
+	<if test="end !=null and ''!=end">
+	and create_time &lt; #{end}
+	</if>
+	
+	</select>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.StopCustomerDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.StopCustomerEntity" id="stopCustomerMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="username" column="username"/>
+        <result property="nickname" column="nickname"/>
+        <result property="photoUrl" column="photo_url"/>
+        <result property="power" column="power"/>
+        <result property="diamondBalance" column="diamond_balance"/>
+        <result property="countryAreaCode" column="country_area_code"/>
+        <result property="status" column="status"/>
+        <result property="inviteCode" column="invite_code"/>
+        <result property="fromInviteCid" column="from_invite_cid"/>
+        <result property="invitePriseStatus" column="invite_prise_status"/>
+        <result property="inviteCount" column="invite_count"/>
+        <result property="ctcBalance" column="ctc_balance"/>
+        <result property="inviteRewardCount" column="invite_reward_count"/>
+        <result property="channelId" column="channel_id"/>
+        <result property="appVersion" column="app_version"/>
+        <result property="sbFlag" column="sb_flag"/>
+    </resultMap>
+
+    <select id="withdraworderlist" resultType="io.credittag.mis.modules.ctc.entity.StopCustomerEntity" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+			*
+		FROM
+		    customer
+		WHERE (status=1
+		OR status=2)
+		${ew.sqlSegment}
+	</select>
+
+    <update id="freeze" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		UPDATE
+			customer
+		SET
+		    status=2
+		WHERE 1=1
+		    ${ew.sqlSegment}
+	</update>
+
+    <update id="thaw" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		UPDATE
+			customer
+		SET
+		    status=1
+		WHERE 1=1
+		    ${ew.sqlSegment}
+	</update>
+
+</mapper>

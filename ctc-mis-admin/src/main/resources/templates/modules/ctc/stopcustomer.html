@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+                <input type="text" class="form-control input-inline" v-model="stopCustomer.phone" placeholder="手机号" id="telNo">
+                <a class="btn btn-default query_btn" @click="query">查询</a>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.createTime" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.updateTime" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">用户名，默认为手机号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.username" placeholder="用户名，默认为手机号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">昵称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.nickname" placeholder="昵称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">头像链接</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.photoUrl" placeholder="头像链接"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">算力</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.power" placeholder="算力"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">钻石余额</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.diamondBalance" placeholder="钻石余额"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">国家区号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.countryAreaCode" placeholder="国家区号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">状态，0已发送验证码，1已注册，2冻结，3注销</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.status" placeholder="状态，0已发送验证码，1已注册，2冻结，3注销"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">cmt自己的邀请码</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.inviteCode" placeholder="cmt自己的邀请码"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">来源邀请用户id</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.fromInviteCid" placeholder="来源邀请用户id"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">邀请发放状态，0未发放，1已发放</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.invitePriseStatus" placeholder="邀请发放状态，0未发放，1已发放"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.inviteCount" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.ctcBalance" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.inviteRewardCount" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.channelId" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.appVersion" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="stopCustomer.sbFlag" placeholder=""/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/stopcustomer.js?_${.now?long}"></script>
+</body>
+</html>

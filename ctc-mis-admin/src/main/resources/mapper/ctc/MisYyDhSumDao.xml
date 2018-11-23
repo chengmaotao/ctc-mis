@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.MisYyDhSumDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap type="io.credittag.mis.modules.ctc.entity.MisYyDhEntity"
+		id="misYyDhMap">
+		<result property="id" column="id" />
+		<result property="dhcode" column="dhcode" />
+		<result property="type" column="type" />
+		<result property="count" column="count" />
+		<result property="status" column="status" />
+		<result property="expireTime" column="expire_time" />
+		<result property="remark" column="remark" />
+		<result property="pid" column="pid" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	<select id="queryPageSum" parameterType="io.credittag.mis.modules.ctc.entity.MisYySumEntity"
+		resultType="io.credittag.mis.modules.ctc.entity.MisYySumEntity">
+		SELECT count(dhcode) AS dhCount,MAX(expire_time) AS
+		expireTime,MAX(type) as type,MAX(count) as sumCount,MAX(remark) AS remark,pid AS
+		pId,Max(create_time) AS createTime
+		FROM mis_yy_dh group by pid
+		${ew.sqlSegment}
+	</select>
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.WalletDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap type="io.credittag.mis.modules.ctc.entity.WalletEntity"
+		id="walletMap">
+		<result property="id" column="id" />
+		<result property="walletid" column="wallet_id" />
+		<result property="createtime" column="create_time" />
+		<result property="bak" column="bak" />
+	</resultMap>
+
+
+	<sql id="sqlCoulmn">
+		a.id as "id",a.wallet_id as "walletid",a.create_time as "createtime",a.bak as "bak"
+	</sql>
+
+	<!-- 钱包列表 -->
+	<select id="walletList" resultType="io.credittag.mis.modules.ctc.entity.WalletEntity" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select
+		<include refid="sqlCoulmn"></include>,
+		b.coin_addr as "coinaddr",
+		b.coin_type as "coinType"
+		from wallet a join wallet_asset b on a.wallet_id = b.wallet_id
+		${ew.sqlSegment}
+		order by a.create_time desc
+	</select>
+	
+	<!-- 钱包列表 -统计-->
+	<select id="walletListTotal" resultType="io.credittag.mis.modules.ctc.entity.WalletEntity" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select  count(distinct walletid) as walletid, count(distinct coinaddr) as coinaddr from (
+			select
+				<include refid="sqlCoulmn"></include>,
+			b.coin_addr as "coinaddr",
+			b.coin_type as "coinType"
+			from wallet a join wallet_asset b on a.wallet_id = b.wallet_id
+			${ew.sqlSegment}
+			order by a.create_time desc
+		) a
+	</select>
+
+</mapper>

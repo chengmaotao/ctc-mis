@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.TotalDealDayDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.TotalDealDayEntity" id="totalDealDayMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="amountMoney" column="amount_money"/>
+        <result property="amountTime" column="amount_time"/>
+        <result property="amountCtcWalletAddr" column="amount_ctc_wallet_addr"/>
+        <result property="extra" column="extra"/>
+    </resultMap>
+    
+    <insert id="insertDealTotal"  parameterType="io.credittag.mis.modules.ctc.entity.TotalDealDayEntity">
+    insert into total_deal_day (create_time,amount_money,amount_time,amount_ctc_wallet_addr,extra,amount_ctc_wallet_addr_all,
+    amount_ctc_wallet_addr_from,amount_ctc_wallet_addr_to) 
+    values (
+    #{votime},#{amountMoney},#{amountTime},#{amountCtcWalletAddr},#{extra},#{amountCtcWalletAddrAll},#{amountCtcWalletAddrFrom},#{amountCtcWalletAddrTo}
+    )
+    </insert>
+    <select id="query" resultType="io.credittag.mis.modules.ctc.entity.TotalDealDayEntity" parameterType="map">
+    select create_time as createTime,amount_money as amountMoney,amount_time as amountTime,amount_ctc_wallet_addr as amountCtcWalletAddr
+     , extra as extra, amount_ctc_wallet_addr_all as amountCtcWalletAddrAll,amount_ctc_wallet_addr_from as amountCtcWalletAddrFrom,
+     amount_ctc_wallet_addr_To as amountCtcWalletAddrTo
+    from total_deal_day
+    where
+    create_time  &gt;= #{begin}
+     and create_time &lt; #{end}
+    order by create_time desc
+   
+    </select>
+    
+    <select id="total" resultType="io.credittag.mis.modules.ctc.entity.TotalDealDayEntity" parameterType="map">
+    select sum(amountMoney) as amountMoney,sum(amountTime) as amountTime ,sum(amountCtcWalletAddr) as amountCtcWalletAddr
+    from (
+    select create_time as createTime,amount_money as amountMoney,amount_time as amountTime,amount_ctc_wallet_addr as amountCtcWalletAddr
+    from total_deal_day
+    where
+    1=1
+    <if test="begin !=null and ''!=begin">
+   and  create_time  &gt;= #{begin}
+    </if>
+    <if test="end !=null and '' !=end">
+     and create_time &lt; #{end}
+    </if>
+    
+    ) a
+    </select>
+    
+    <delete id="deleteBySameTime" parameterType="map">
+    delete from total_deal_day
+    where create_time between  #{begin}  and #{end} 
+    </delete>
+    
+    
+
+
+</mapper>

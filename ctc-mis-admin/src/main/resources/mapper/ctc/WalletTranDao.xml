@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.WalletTranDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap type="io.credittag.mis.modules.ctc.entity.WalletTranEntity" id="walletTranMap">
+		<result property="id" column="id" />
+		<result property="txid" column="tx_id" />
+		<result property="srcaddr" column="src_addr" />
+		<result property="dstaddr" column="dst_addr" />
+		<result property="cointype" column="coin_type" />
+		<result property="tranamt" column="tran_amt" />
+		<result property="tranfee" column="tran_fee" />
+		<result property="trantype" column="tran_type" />
+		<result property="transtate" column="tran_state" />
+		<result property="createtime" column="create_time" />
+		<result property="updatetime" column="update_time" />
+		<result property="bak" column="bak" />
+	</resultMap>
+
+
+	<sql id="sqlCoulmn">
+		a.id as "id",
+		a.tx_id as "txid",
+		a.src_addr as "srcaddr",
+		a.dst_addr as "dstaddr",
+		a.coin_type as "cointype",
+		a.tran_amt as "tranamt",
+		a.tran_fee as "tranfee",
+		a.tran_type as "trantype",
+		a.tran_state as "transtate",
+		a.create_time as "createtime",
+		a.update_time as "updatetime",
+		a.bak as "bak"
+	</sql>
+
+
+	<!-- 交易明细 -->
+	<select id="wallettranList" resultType="io.credittag.mis.modules.ctc.entity.WalletTranEntity" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+			select
+	 			<include refid="sqlCoulmn"></include>
+	 		from wallet_tran a 
+	 		${ew.sqlSegment}
+	 		order by a.create_time desc
+	</select>
+	<select id="wallettranListTotal" resultType="io.credittag.mis.modules.ctc.entity.WalletTranEntity" parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+			
+	 		select  sum(tranamt) as tran_amt, sum(tranfee) as tran_fee from (
+	 			select
+	 				<include refid="sqlCoulmn"></include>
+	 			from wallet_tran a 
+	 			${ew.sqlSegment}
+	 			order by a.create_time desc
+	 		) a
+	</select>
+
+	<!-- 交易金额 和 交易笔数 -->
+	<select id="getTranInfo" resultType="io.credittag.mis.modules.ctc.entity.WalletDataCount" parameterType="io.credittag.mis.modules.ctc.entity.WalletTranEntity">
+		select 
+			 substring(date_add(b.create_time,interval 8 hour),1,10) as voStrDate,
+			 sum(b.tran_amt) as "tranAmtCount",
+			 COUNT(b.tx_id) as "tranCount"
+		from wallet_tran b 
+		where b.tran_state='2' <!-- 已经成功 -->
+		 <if test="paramMinDate != null">
+		 	and b.create_time &gt;= #{paramMinDate}
+		 </if>
+		 <if test="paramMaxDate != null">
+		 	and b.create_time &lt;= #{paramMaxDate}
+		 </if>
+		 GROUP BY voStrDate
+	</select>
+	
+	<!-- 交易地址数 -->
+	<select id="getTranAddressCount" resultType="io.credittag.mis.modules.ctc.entity.WalletDataCount" parameterType="io.credittag.mis.modules.ctc.entity.WalletTranEntity">
+		SELECT
+			t.tempa as voStrDate,
+			count(address) as tranAddressCount
+		FROM
+			(
+				SELECT
+					substring(date_add(b.create_time,interval 8 hour), 1, 10) AS tempa,
+					src_addr AS "address"
+				FROM
+					wallet_tran b
+				WHERE
+					b.tran_state = 2
+					<if test="paramMinDate != null">
+					 	and b.create_time &gt;= #{paramMinDate}
+					 </if>
+					 <if test="paramMaxDate != null">
+					 	and b.create_time &lt;= #{paramMaxDate}
+					 </if>
+				UNION
+					SELECT
+						substring(date_add(b.create_time,interval 8 hour), 1, 10) AS tempa,
+						dst_addr AS "address"
+					FROM
+						wallet_tran b
+					WHERE
+						tran_state = 2
+					<if test="paramMinDate != null">
+					 	and b.create_time &gt;= #{paramMinDate}
+					 </if>
+					 <if test="paramMaxDate != null">
+					 	and b.create_time &lt;= #{paramMaxDate}
+					 </if>
+			) t
+		GROUP BY
+			t.tempa
+	</select>
+	
+	<!-- 获得交易记录的 最大 最小日期 -->
+	<select id="getTranDate" resultType="io.credittag.mis.modules.ctc.entity.WalletTranEntity">
+		select max(a.create_time) as "paramMaxDate", min(a.create_time) as "paramMinDate" from wallet_tran a
+	</select>
+
+
+	<!-- 交易总量  交易总笔数  -->
+	<select id="getTransactionInfo" resultType="io.credittag.mis.modules.ctc.entity.CtcDataCountEntity">
+		SELECT
+			count(*) as transactionCount,
+			sum(tran_amt) as transactionAmountCount
+		FROM
+			wallet_tran a
+		WHERE
+			tran_state = 2
+	</select>
+	
+	<!-- 交易地址 -->
+	<select id="getTransactionAddressCount" resultType="java.lang.String">
+		SELECT
+			count(a.address) as transactionAddressCount
+		FROM
+			(
+				SELECT
+					src_addr AS "address"
+				FROM
+					wallet_tran
+				WHERE
+					tran_state = 2
+				UNION
+					SELECT
+						dst_addr AS "address"
+					FROM
+						wallet_tran
+					WHERE
+						tran_state = 2
+			) a
+	</select>
+	
+	
+</mapper>

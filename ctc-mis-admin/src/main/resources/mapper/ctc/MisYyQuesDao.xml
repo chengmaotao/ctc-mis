@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.MisYyQuesDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.MisYyQuesEntity" id="misYyQuesMap">
+        <result property="id" column="id"/>
+        <result property="question" column="question"/>
+        <result property="answerA" column="answer_a"/>
+        <result property="answerB" column="answer_b"/>
+        <result property="answerC" column="answer_c"/>
+        <result property="answerD" column="answer_d"/>
+        <result property="keyword" column="keyword"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="count" column="count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="useTime" column="use_time"/>
+        <result property="answerRight" column="answer_right"/>
+        <result property="language" column="language"/>
+    </resultMap>
+
+
+</mapper>

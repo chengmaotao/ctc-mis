@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+
+  <!-- 矿场人数明细 -->
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<div class="form-group col-sm-15">
+                <input type="text" class="ctc-form-control" placeholder="开始日期" id="beginDateId">
+                <input type="text" class="ctc-form-control" placeholder="结束日期" id="endDateId">
+                <input type="text" class="ctc-form-control" placeholder="用户ID" id="customerId">
+                <input type="text" class="ctc-form-control" placeholder="手机号" id="username">
+            	 		
+    			<select   id="status" class="ctc-form-control" >
+              		<option value="null" selected="selected">请选择状态</option>
+              		<option value="9">已发送验证码</option>
+        			<option value="0">已注册</option>
+        			<option value="1">已登录</option>
+              	</select> 
+              			
+           			
+            </div>
+           
+            <a class="btn btn-default" @click="query">查询</a>
+        </div>
+        
+        <table id="jqGrid"></table>
+        	 <div style="text-align:left">
+        		<span id="userCount">累计注册用户数：0</span>
+     	  	 </div>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/customerdetail.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/test/ctcdate.js"></script>
+</body>
+</html>

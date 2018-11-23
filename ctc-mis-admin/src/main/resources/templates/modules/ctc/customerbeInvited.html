@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+ <!-- 被邀请人明细页面 -->
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<div class="form-group col-sm-11">
+                <input type="text" class="ctc-form-control" placeholder="开始日期" id="beginDateId">
+                <input type="text" class="ctc-form-control" placeholder="结束日期" id="endDateId">
+                <input type="text" class="ctc-form-control" placeholder="用户ID" id="customerId">
+                <input type="text" class="ctc-form-control" placeholder="被邀请人手机号" id="username">
+                <input type="text" class="ctc-form-control" placeholder="邀请人手机号" id="phoneN">
+                <select  class="ctc-form-control" id="status">
+              	<option value="" selected="selected">请选择状态</option>
+              	<option value="0">注册未登录</option>
+              	<option value="1">登录过</option>
+              	</select> 
+            </div>
+            <a  class="btn btn-default ctc-form-control" @click="query">查询</a>
+        </div>
+        <table id="jqGrid"></table>
+       
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/customerbeInvited.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/test/ctcdate.js"></script>
+</body>
+</html>

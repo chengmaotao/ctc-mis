@@ -1,0 +1,70 @@
+spring:
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        druid:
+            first:  #数据源1 管理库
+                url: jdbc:mysql://127.0.0.1:3306/mis?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                username: root
+                password: root
+            second:  #数据源2 矿场库
+                url: jdbc:mysql://127.0.0.1:3306/ctc_customer?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                username: root
+                password: root
+            three:  #数据源3 钱包
+                url: jdbc:mysql://127.0.0.1:3306/ctc_browser?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                username: root
+                password: root
+            four:  #数据源4 区块链浏览器
+                url: jdbc:mysql://127.0.0.1:3306/lw?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                username: root
+                password: 123456
+            five:  #数据源4 区块链浏览器
+                url: jdbc:mysql://127.0.0.1:3306/ctc_partner?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+                username: root
+                password: 123456
+
+            initial-size: 20
+            max-active: 50
+            min-idle: 20
+            max-wait: 60000
+            pool-prepared-statements: true
+            max-pool-prepared-statement-per-connection-size: 20
+            time-between-eviction-runs-millis: 60000
+            min-evictable-idle-time-millis: 300000
+            #validation-query: SELECT 1 FROM DUAL
+            test-while-idle: false
+            test-on-borrow: false
+            test-on-return: false
+            stat-view-servlet:
+                enabled: true
+                url-pattern: /druid/*
+                #login-username: admin
+                #login-password: admin
+            filter:
+                stat:
+                    log-slow-sql: true
+                    slow-sql-millis: 1000
+                    merge-sql: false
+                wall:
+                    config:
+                        multi-statement-allow: true
+
+wallet:
+  socket: 
+    host: 127.0.0.1
+    port: 50066
+    username: ctcrpc
+    password: wpMGdbnhJ7YU
+    timeout: 10000 
+
+    #rabbitmq:
+    #  username: admin
+     # password: CtcQ9F042
+     # addresses: 127.0.0.1:5672
+
+usernameemail: report@credittag.io
+password: Re12345
+to: hexujun@credittag.io
+port: 465
+host: smtp.exmail.qq.com

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+        <div class="form-group col-sm-10">
+		 <input type="text" class="ctc-form-control" placeholder="开始时间" id="beginDateId" readonly="readonly">
+         <input type="text" class="ctc-form-control" placeholder="结束时间" id="endDateId" readonly="readonly">
+       	  <input type="text" class="ctc-form-control" v-model="accountDetailmx.ID" placeholder="用户ID" id="userId">
+          <input type="text" class="ctc-form-control" v-model="accountDetailmx.PhoneNo" placeholder="手机号" id="phoneNo">
+       	   </div>
+       	 <a class="btn btn-default" @click="query">查询</a>
+         </div>
+        <table id="jqGrid"></table>
+        <div style="text-align:left">
+        	<span id="userCount">累计领取用户 :0</span>
+       		<span id="jewelCount">累计领取信用钻数量 :0</span>
+        </div>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/accountdetailmx.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/test/ctcdate.js"></script>
+</body>
+</html>

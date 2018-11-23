@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="io.credittag.mis.modules.ctc.dao.TblBcTransactionDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap
+		type="io.credittag.mis.modules.ctc.entity.TblBcTransactionEntity"
+		id="tblBcTransactionMap">
+		<result property="trxId" column="trx_id" />
+		<result property="blockId" column="block_id" />
+		<result property="blockNum" column="block_num" />
+		<result property="fromAccount" column="from_account" />
+		<result property="fromAccountName" column="from_account_name" />
+		<result property="toAccount" column="to_account" />
+		<result property="toAccountName" column="to_account_name" />
+		<result property="amount" column="amount" />
+		<result property="fee" column="fee" />
+		<result property="memo" column="memo" />
+		<result property="trxTime" column="trx_time" />
+		<result property="calledAbi" column="called_abi" />
+		<result property="abiParams" column="abi_params" />
+		<result property="extraTrxId" column="extra_trx_id" />
+		<result property="isCompleted" column="is_completed" />
+		<result property="trxType" column="trx_type" />
+		<result property="assetId" column="asset_id" />
+		<result property="contractId" column="contract_id" />
+		<result property="createdAt" column="created_at" />
+		<result property="updatedAt" column="updated_at" />
+		<result property="deletedAt" column="deleted_at" />
+	</resultMap>
+
+	<select id="withIdQuery"
+		resultType="io.credittag.mis.modules.ctc.entity.TblBcTransactionEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+		*
+		FROM
+		tbl_bc_transaction
+		WHERE 1=1
+		${ew.sqlSegment}
+	</select>
+
+	<select id="totalDealDay"
+		resultType="io.credittag.mis.modules.ctc.entity.TotalDealDayEntity"
+		parameterType="map">
+		SELECT
+		<!-- SUBSTRING(a.trx_time, 1, 10) AS createTime, -->
+		sum(a.amount) as amountMoney,
+		count(a.trx_id) as amountTime
+		FROM
+		tbl_bc_transaction a
+		where
+		1=1
+		<if test="begin !=null and ''!=begin">
+			and a.trx_time &gt;= #{begin}
+		</if>
+		<if test="end !=null and ''!=end">
+			and a.trx_time &lt; #{end}
+		</if>
+	</select>
+	
+
+	<select id="getTranDetailByAddr" parameterType="map"
+		resultType="io.credittag.mis.modules.ctc.entity.TblBcTransactionEntity">
+
+		SELECT trx_time as trxTime, from_account as account, (0-amount) as
+		amount, (0-fee) as fee, 'out' as inorout from
+		tbl_bc_transaction
+		WHERE
+		1=1
+		and from_account = #{addr}
+		<if test="from != null and ''!=from">
+			and true= ${from}
+		</if>
+
+		UNION ALL
+
+		SELECT trx_time as trxTime, to_account as account, amount as
+		amount, 0 as fee ,'in' as inorout from tbl_bc_transaction
+		WHERE 1=1
+		and
+		to_account = #{addr}
+		<if test="to != null and ''!=to">
+			and true= ${to}
+		</if>
+	</select>
+	
+	<select id="getTranDetailByAddrTransed" parameterType="map"
+		resultType="map">
+		
+	
+	SELECT count(DISTINCT addr) as count from (
+
+		SELECT  from_account as addr
+		  from
+		tbl_bc_transaction
+		WHERE
+		1=1
+		and 
+		from_account in 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+		<if test="begin !=null and ''!=begin">
+			and trx_time &gt;= #{begin}
+		</if>
+		<if test="end !=null and ''!=end">
+			and trx_time &lt; #{end}
+		</if>
+		
+	UNION
+
+	SELECT to_account as addr
+		  from
+		tbl_bc_transaction
+		WHERE
+		1=1
+		and 
+		to_account in 
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">  
+            #{item}  
+        </foreach>
+		<if test="begin !=null and ''!=begin">
+			and trx_time &gt;= #{begin}
+		</if>
+		<if test="end !=null and ''!=end">
+			and trx_time &lt; #{end}
+		</if>
+)b
+	</select>
+	
+	<select id="totalgetTranDetailByAddr" parameterType="map"
+		resultType="io.credittag.mis.modules.ctc.entity.TblBcTransactionEntity">
+		select sum(account) as amount, sum(fee) as fee from (
+		SELECT trx_time
+		as trxTime, from_account as account, (0-amount) as amount, (0-fee) as
+		fee, 'out' as inorout from
+		tbl_bc_transaction
+		WHERE 1=1
+		and from_account = #{addr}
+		= #{addr}
+		<if test="from != null and ''!=from">
+			and true= ${from}
+		</if>
+		UNION ALL
+		SELECT trx_time as trxTime, to_account as account, amount as
+		amount, 0 as fee ,'in' as inorout from tbl_bc_transaction
+		WHERE 1=1
+		and to_account = #{addr}
+		<if test="to != null and ''!=to">
+			and true= ${to}
+		</if>
+		) a
+	</select>
+	
+	<select id="addrFromAndToCount" parameterType = "map" resultType ="map">
+	SELECT count(DISTINCT from_account) as fromCount , count(DISTINCT to_account) as toCount 
+	from tbl_bc_transaction 
+	WHERE  1=1
+	<if test="begin !=null">
+	and trx_time  &gt;= #{begin}
+	</if>
+	<if test="end != null">
+	 and trx_time &lt; #{end}
+	</if>
+	
+	</select>
+</mapper>

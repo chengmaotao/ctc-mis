@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.CtcDetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.CtcDetailEntity" id="ctcDetailMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="cid" column="cid"/>
+        <result property="amount" column="amount"/>
+        <result property="direction" column="direction"/>
+        <result property="balance" column="balance"/>
+        <result property="reason" column="reason"/>
+    </resultMap>
+
+
+	<!-- 任务完成赠送CTC数量 -->
+	<select id="selectCtcNum" parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity" resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+		SELECT
+			substring(
+				date_add(create_time, INTERVAL 8 HOUR),
+				1,
+				10
+			) AS voStrDate,
+			SUM(amount) AS ctcNum
+		FROM
+			ctc_detail
+		WHERE reason = #{reason}
+		  and create_time &gt;= #{paramMinDate} and create_time &lt;= #{paramMaxDate}
+		GROUP BY
+			voStrDate
+	
+	</select>
+</mapper>

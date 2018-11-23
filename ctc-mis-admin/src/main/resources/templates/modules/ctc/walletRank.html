@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<#include "/header.html">
+</head>
+<body>
+	<!-- 钱包rank页面 -->
+	<div id="rrapp" v-cloak>
+		<div v-show="showList">
+			<div class="grid-btn">
+				<div class="form-group col-sm-100">
+
+					<input type="text" class="form-control" style="display:inline; width:20%" placeholder="开始位置" id="beginnum" value = 1> 
+						<input type="text" class="form-control" style="display:inline; width:20%" placeholder="结束位置" id="endnum" value = 10> 
+						<input type="text" class="form-control" style="display:inline; width:20%" placeholder="钱包地址" id="walletaddr"> 
+						<select class="form-control" style="display:inline; width:20%" id ="orderby">
+							<option value="desc">倒叙</option>
+							<option value="asc">正序</option>
+						</select>
+						<a class="btn btn-default"  @click="query">查询</a>
+				</div>
+
+				
+			</div>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+
+		<!-- <div v-show="!showList" class="panel panel-default">
+		<div class="panel-heading">{{title}}</div>
+		<form class="form-horizontal">
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">手机号</div>
+			   	<div class="col-sm-10">
+			      <input type="text" class="form-control" v-model="customer.username" readonly="readonly" placeholder="手机号"/>
+			    </div>
+			</div>
+			<div class="form-group">
+			   	<div class="col-sm-2 control-label">邀请次数</div>
+			   	<div class="col-sm-10">
+			      <input type="number" class="form-control" v-model="customer.inviteRewardCount" placeholder="邀请次数"/>
+			    </div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-2 control-label"></div> 
+				<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+				&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+			</div>
+		</form>
+	</div> -->
+	</div>
+	<script
+		src="${request.contextPath}/statics/js/modules/ctc/walletRank.js?_${.now?long}"></script>
+</body>
+</html>

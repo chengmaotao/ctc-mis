@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.TrxCtcDao">
+    <delete id="deleteByTxid">
+   	 delete  from trx_info_ctc where trx_id=#{trxId}
+    </delete>
+     <delete id="deleteByOutTxid">
+   	 delete  from trx_notify_out where trx_id=#{trxId}
+    </delete>
+     <delete id="deleteByInTxid">
+   	 delete  from trx_notify_in where trx_id=#{trxId}
+    </delete>
+</mapper>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+    <script src="${request.contextPath}/statics/js/jquery.form.js"></script>
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+            <form id="ajaxForm" class="clearfix" action="/ctc/misyyexc/save" method="post" enctype="multipart/form-data">
+                <div class="form-group file_father" >
+                    <input type="file" name="file" value="选择xls文件" class="form-control file_input" v-model="misYyExc.input" id="file_input"/>
+
+                </div>
+                <button type="submit" class="btn btn-default btn2" id="import_file">导入</button>
+
+
+                <div class="form-group input-father">
+                    <input type="text" class="form-control input-inline" v-model="misYyExc.phone" placeholder="手机号" id="telNo">
+                    <input type="text" class="form-control input-inline"  v-model="misYyExc.mark" placeholder="标签" id="mark">
+                    <a class="btn btn-default query_btn" @click="query">查询</a>
+                </div>
+            </form>
+
+
+
+
+
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+
+    <div v-show="!showList" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+														                    <div class="form-group">
+                        <div class="col-sm-2 control-label">兑换码</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.dhcode" placeholder="兑换码"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">兑换数量</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.count" placeholder="兑换数量"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">奖励类型</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.type" placeholder="奖励类型0：信用钻1：算力2：ctc"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">手机号</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.phone" placeholder="手机号"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">微信昵称</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.wxNickName" placeholder="微信昵称"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">标签</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.mark" placeholder="标签"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">0:初始状态1：删除状态（兑换码生成之前可以删除）</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.status" placeholder="0:初始状态1：删除状态（兑换码生成之前可以删除）"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">过期时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.expireTime" placeholder="过期时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.createTime" placeholder=""/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label"></div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyExc.updateTime" placeholder=""/>
+                        </div>
+                    </div>
+							            <div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="${request.contextPath}/statics/js/modules/ctc/misyyexc.js?_${.now?long}"></script>
+
+</body>
+</html>

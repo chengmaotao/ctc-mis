@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.MisYyXmjdDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.MisYyXmjdEntity" id="misYyXmjdMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="time" column="time"/>
+        <result property="url" column="url"/>
+        <result property="language" column="language"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+	<select id="queryPage" resultType="io.credittag.mis.modules.ctc.entity.MisYyXmjdEntity" parameterType= "com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select id,title, time, url, language, create_time,  update_time
+		from 
+		mis_yy_xmjd 
+		${ew.sqlSegment}
+	</select>
+	
+	<select id="findById" resultType="io.credittag.mis.modules.ctc.entity.MisYyXmjdEntity" parameterType= "long">
+		select id,title, time, url, language, create_time,  update_time
+		from 
+		mis_yy_xmjd 
+		where id = #{id}
+	</select>
+	
+	<update id="updateByIdOverride" parameterType= "io.credittag.mis.modules.ctc.entity.MisYyXmjdEntity" >
+	update mis_yy_xmjd
+		set title = #{title}, url = #{url} , language= #{language}, update_time = #{updateTime}
+	where id = #{id}
+	</update>
+
+</mapper>

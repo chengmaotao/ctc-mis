@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<#if shiro.hasPermission("ctc:misyydh:save")>
+            <a class="btn btn-primary" @click="add"><i class="fa fa-plus"></i>&nbsp;生成兑换码</a>
+			</#if>
+        </div>
+        <table id="jqGrid"></table>
+        <div id="jqGridPager"></div>
+    </div>
+	 <div v-show="showListXq">
+	   <div class="grid-btn">
+	   <div class="form-group">
+                <a   class="btn btn-warning" @click="reload" />返回</a>
+	   </div>
+        <table id="jqGridXq"></table>
+        <div id="jqGridPagerXq"></div>
+    </div>
+	</div>
+	
+    <div v-show="showListadd" class="panel panel-default">
+        <div class="panel-heading">{{title}}</div>
+        <form class="form-horizontal">
+				 <div class="form-group">
+                        <div class="col-sm-2 control-label">奖励类型</div>
+                        <div class="col-sm-10">
+                            <select class="form-control" v-model="misYyDh.type"/>
+                            	<option value="0">信用钻</option>
+                            	<option value="1">算力</option>
+                            	<option value="2">CTC</option>
+                            </select>
+                        </div>
+                    </div>
+					<div class="form-group">
+                        <div class="col-sm-2 control-label">兑换数量</div>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" v-model="misYyDh.sumCount" placeholder="兑换数量" maxlength="5"/>
+                        </div>
+                    </div> 
+						<div class="form-group">
+                        <div class="col-sm-2 control-label">奖励数量</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyDh.count" placeholder="兑换数量" maxlength="5"/>
+                        </div>
+                    </div> 					                    <div class="form-group">
+                        <div class="col-sm-2 control-label">过期时间</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="beginDateId" readonly="readonly" v-model="misYyDh.expireTime" placeholder="过期时间"/>
+                        </div>
+                    </div>
+											                    <div class="form-group">
+                        <div class="col-sm-2 control-label">备注</div>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" v-model="misYyDh.remark" maxlength="500" placeholder="备注"/>
+                        </div>
+                    </div>
+			<div class="form-group">
+                <div class="col-sm-2 control-label"></div>
+                <input type="button" class="btn btn-primary" @click="save" value="确定"/>
+                &nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="reload" value="返回"/>
+            </div>
+        </form>
+    </div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/misyydh.js?_${.now?long}"></script>
+</body>
+</html>

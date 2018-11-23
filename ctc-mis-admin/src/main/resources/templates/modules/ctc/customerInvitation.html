@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+ <!-- 成功发起邀请人明细页面 -->
+<div id="rrapp" v-cloak>
+    <div v-show="showList">
+        <div class="grid-btn">
+			<div class="form-group col-sm-8">
+                <input type="text" class="ctc-form-control" placeholder="开始日期" id="beginDateId">
+                <input type="text" class="ctc-form-control" placeholder="结束日期" id="endDateId">
+                <input type="text" class="ctc-form-control" placeholder="用户ID" id="customerId">
+                <input type="text" class="ctc-form-control" placeholder="手机号" id="username">
+            </div>
+            <a class="btn btn-default" @click="query">查询</a>
+        </div>
+        <table id="jqGrid"></table>
+       	 <div style="text-align:left">
+        	<span id="userCount1">累计邀请人总数  :0</span>
+       		<span id="userCount2">累计被邀请人总数:0</span>
+        </div>
+        <div id="jqGridPager"></div>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/customerInvitation.js?_${.now?long}"></script>
+<script src="${request.contextPath}/statics/test/ctcdate.js"></script>
+</body>
+</html>

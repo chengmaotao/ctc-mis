@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="io.credittag.mis.modules.ctc.dao.WalletAssetDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap
+		type="io.credittag.mis.modules.ctc.entity.WalletAssetEntity"
+		id="walletAssetMap">
+		<result property="id" column="id" />
+		<result property="walletid" column="walletId" />
+		<result property="coinaddr" column="coin_addr" />
+		<result property="cointype" column="coinType" />
+		<result property="totalamt" column="totalAmt" />
+		<result property="unconfirmamt" column="unConfirmAmt" />
+		<result property="availableamt" column="availableAmt" />
+		<result property="bak" column="bak" />
+		<result property="createtime" column="create_time" />
+		<result property="updatetime" column="updateTime" />
+	</resultMap>
+
+
+
+	<!-- 新增钱包地址数 -->
+	<select id="getWalletAddressCountByDate"
+		resultType="io.credittag.mis.modules.ctc.entity.WalletDataCount"
+		parameterType="io.credittag.mis.modules.ctc.entity.WalletAssetEntity">
+		select
+		count(a.coin_addr) as "walletAddressCount",
+		substring(date_add(a.create_time,interval 8 hour), 1, 10) AS voStrDate
+		from wallet_asset a
+		where a.create_time &gt;= #{paramMinDate} and
+		a.create_time &lt;=
+		#{paramMaxDate}
+		group by voStrDate
+	</select>
+
+
+
+
+	<!-- 钱包地址数 -->
+	<select id="selectWalletAddressCount"
+		resultType="java.lang.String">
+		SELECT
+		count(id) AS "walletAddressCount"
+		FROM
+		wallet_asset
+	</select>
+
+
+
+	<update id="updateTotalAmtByAddress"
+		parameterType="io.credittag.mis.modules.ctc.entity.WalletAssetEntity">
+		update wallet_asset
+		set total_amt = #{totalamt},
+		available_amt = #{totalamt}
+		where wallet_id = #{walletid}
+		and coin_addr
+		= #{coinaddr}
+		and coin_type = #{cointype}
+
+	</update>
+
+	<select id="getWalletIdByAddress"
+		parameterType="java.lang.String"
+		resultType="io.credittag.mis.modules.ctc.entity.WalletAssetEntity">
+		select
+		wallet_id as "walletid"
+		from wallet_asset
+		where
+		coin_addr = #{coinaddr}
+		and coin_type = 'CTC'
+	</select>
+
+
+	<select id="selectList"
+		resultType="io.credittag.mis.modules.ctc.entity.WalletAssetEntity">
+		select
+		id as "id",
+		wallet_id as "walletid",
+		coin_addr as
+		"coinaddr",
+		coin_type as "cointype",
+		total_amt as "totalamt",
+		un_confirm_amt as "unconfirmamt",
+		available_amt as "availableamt",
+		bak
+		as "bak",
+		create_time as "createtime",
+		update_time as "updatetime"
+		from
+		wallet_asset
+
+		where coin_type = 'CTC'
+	</select>
+
+<!-- 现持币 大于 0 -->
+	<select id="queryMoneyMore0" resultType="map"
+		parameterType="map">
+		select count(distinct coin_addr) as count from wallet_asset
+		where
+		coin_type = 'CTC' and
+		available_amt &gt; 0
+		<if test="begin !=null and ''!=begin">
+			and create_time &gt;= #{begin}
+		</if>
+		<if test="end !=null and ''!=end">
+			and create_time &lt; #{end}
+		</if>
+
+	</select>
+	
+	<!-- 历史持币 > 0  现持币0-->
+	<select id="totalDealDayAMT0" resultType="io.credittag.mis.modules.ctc.entity.WalletAssetEntity" parameterType = "map">
+	select distinct(coin_addr)  from wallet_asset
+	where  coin_type = 'CTC' and available_amt = 0
+	<if test="begin != null and ''!= begin">
+	and create_time &gt;= #{begin}
+	</if>
+	<if test="end !=null and ''!= null">
+		and create_time &lt; #{end}
+	</if>
+
+	</select>
+	<!-- 所有新怎地址数，忽略余额 -->
+	<select id="totalDealDayAMTAll" resultType="map" parameterType = "map">
+	select count(distinct coin_addr) as count from wallet_asset
+	where  1=1 and 
+	coin_type = 'CTC' 
+	<if test="begin != null and ''!= begin">
+	and create_time &gt;= #{begin}
+	</if>
+	<if test="end !=null and ''!= null">
+		and create_time &lt; #{end}
+	</if>
+
+	</select>
+	
+	
+
+	<select id="ranklist"
+		resultType="io.credittag.mis.modules.ctc.entity.WalletAssetEntity"
+		parameterType="map">
+		select create_time as createtime,coin_addr as coinaddr, total_amt as totalamt
+		from wallet_asset
+		where 1=1
+		<if test="begintime !=null and ''!=begintime">
+			and create_time &gt;= #{begintime}
+		</if>
+		<if test="endtime !=null and ''!=endtime">
+			and create_time &lt; #{endtime}
+		</if>
+		<if test="walletaddr !=null and ''!=walletaddr">
+			and coin_addr = #{walletaddr}
+		</if>
+		<if test="orderby !=null and ''!=orderby">
+			order by total_amt ${orderby} 
+		</if>
+		<if test="beginnum >=  0 and total > 0 ">
+		limit #{beginnum} , #{total}
+		</if>
+		
+		
+		
+	</select>
+</mapper>

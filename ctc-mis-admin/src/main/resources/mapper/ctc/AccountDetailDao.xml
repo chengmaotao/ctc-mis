@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.AccountDetailDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap type="io.credittag.mis.modules.ctc.entity.AccountDetailEntity"
+		id="accountDetailMap">
+		<result property="id" column="id" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="cid" column="cid" />
+		<result property="amount" column="amount" />
+		<result property="direction" column="direction" />
+		<result property="balance" column="balance" />
+		<result property="reason" column="reason" />
+		<result property="accountPeriod" column="account_period" />
+		<result property="dayTime" column="dayTime" />
+		<result property="amountBalance" column="amountBalance" />
+		<result property="persionCount" column="persionCount" />
+		<result property="phoneNo" column="phoneNo" />
+	</resultMap>
+
+	<select id="getRecordByDay" parameterType="string"
+		resultType="map">
+		SELECT DATE_FORMAT(create_time,"%Y-%m-%d") as
+		dayTime,SUM(amount) as amountBalance,COUNT(DISTINCT cid) as
+		personCount FROM account_detail GROUP BY
+		DATE_FORMAT(create_time,"%Y-%m-%d")
+		${ew.sqlSegment}
+	</select>
+	<select id="getRecordByDayTotal" parameterType="string"
+		resultType="io.credittag.mis.modules.ctc.entity.AccountDetailEntity">
+		select  sum(a.personCount) as personCount, sum(a.amountBalance) as amountBalance from 
+		(
+			SELECT DATE_FORMAT(create_time,"%Y-%m-%d") as
+			dayTime,SUM(amount) as amountBalance,COUNT(DISTINCT cid) as
+			personCount FROM account_detail GROUP BY
+			DATE_FORMAT(create_time,"%Y-%m-%d")
+			${ew.sqlSegment}	
+		
+		) a
+	</select>
+
+	<select id="getRecordMx" parameterType="string"
+		resultType="io.credittag.mis.modules.ctc.entity.AccountDetailEntity">
+		SELECT b.id,
+		b.username as phoneNo,a.amount,a.create_time,a.cid,a.reason,a.direction
+		FROM account_detail a
+		LEFT JOIN customer b
+		ON a.cid=b.id
+		where 1=1
+		${ew.sqlSegment}
+	</select>
+	
+	
+	<select id="getRecordMxTotal" parameterType="string"
+		resultType="io.credittag.mis.modules.ctc.entity.AccountDetailEntity">
+		
+		select count(distinct a.id) as cid, sum(amount) as amountBalance from (
+			SELECT b.id,
+			b.username as phoneNo,a.amount,a.create_time,a.cid,a.reason,a.direction
+			FROM account_detail a
+			LEFT JOIN customer b
+			ON a.cid=b.id
+			where 1=1
+			${ew.sqlSegment}
+		) a
+	</select>
+</mapper>

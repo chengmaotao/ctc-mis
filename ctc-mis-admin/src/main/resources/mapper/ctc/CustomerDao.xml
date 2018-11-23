@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.CustomerDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap
+		type="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		id="customerMap">
+		<result property="id" column="id" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="username" column="username" />
+		<result property="nickname" column="nickname" />
+		<result property="photoUrl" column="photo_url" />
+		<result property="power" column="power" />
+		<result property="diamondBalance" column="diamond_balance" />
+		<result property="countryAreaCode" column="country_area_code" />
+		<result property="status" column="status" />
+		<result property="inviteCode" column="invite_code" />
+		<result property="fromInviteCid" column="from_invite_cid" />
+		<result property="invitePriseStatus"
+			column="invite_prise_status" />
+		<result property="inviteCount" column="invite_count" />
+		<result property="ctcBalance" column="ctc_balance" />
+		<result property="channelId" column="channel_id" />
+		<result property="appVersion" column="app_version" />
+		<result property="sbFlag" column="sb_flag" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		id,
+		create_time,
+		update_time,
+		username,
+		nickname,
+		photo_url,
+		power,
+		diamond_balance,
+		country_area_code,
+		status,
+		invite_code,
+		from_invite_cid,
+		invite_prise_status,
+		invite_count,
+		ctc_balance
+	</sql>
+
+	<!-- 根据手机号码（也就是username）获得记录 -->
+	<select id="getCustomerByUsername" parameterType="java.util.Map"
+		resultMap="customerMap">
+		select
+		<include refid="Base_Column_List"></include>
+		from customer
+		where username = #{mobile}
+	</select>
+
+
+	<!-- 用户总量 -->
+
+
+	<!-- 成功发起邀请人明细 -->
+	<select id="customerInvitationlist"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select id,username,invite_count as
+		"inviteCount",create_time as "createTime"
+		from customer
+		${ew.sqlSegment}
+		ORDER BY id
+	</select>
+	<!-- 成功发起邀请人明细 -->
+	<select id="customerInvitationlistself"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT a.id as id, count(*) as "inviteCount", a.create_time as
+		createTime , a.username as username from
+		(
+		select id ,create_time, username from customer
+		<where>
+			1=1
+			<if test="beginDates !=null and ''!=beginDates">
+				and create_time &gt;= #{beginDates}
+			</if>
+			<if test="endDates!=null and ''!=endDates">
+				and create_time &lt;= #{endDates}
+			</if>
+			<if test="username !=null and ''!=username">
+				and username = #{username}
+			</if>
+			<if test="customerId !=null and ''!=customerId">
+				and id = #{customerId}
+			</if>
+		</where>
+		) a
+		LEFT JOIN customer b
+		on a.id = b.from_invite_cid
+		GROUP by a.id
+		ORDER
+		by a.id
+	</select>
+
+
+	<!-- 成功发起邀请人明细 统计 -->
+	<select id="customerInvitationlistTotal"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select count(distinct id) as id ,sum(inviteCount) as
+		inviteCount from (
+		select id,username,invite_count as "inviteCount",create_time as "createTime"
+		from customer
+		${ew.sqlSegment}
+		ORDER BY id
+		) a
+	</select>
+	<!-- 成功发起邀请人明细 统计 -->
+	<select id="customerInvitationlistTotalself"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select count(c.id) as id ,sum(c.inviteCount) as inviteCount from
+		(
+		SELECT a.id as id, count(*) as "inviteCount", a.create_time as createTime ,
+		a.username as username from
+		(
+		select id ,create_time, username from customer
+		<where>
+			1=1
+			<if test="beginDates !=null and ''!=beginDates">
+				and create_time &gt;= #{beginDates}
+			</if>
+			<if test="endDates!=null and ''!=endDates">
+				and create_time &lt;= #{endDates}
+			</if>
+			<if test="username !=null and ''!=username">
+				and username = #{username}
+			</if>
+			<if test="customerId !=null and ''!=customerId">
+				and id = #{customerId}
+			</if>
+		</where>
+		) a
+		LEFT JOIN customer b
+		on a.id = b.from_invite_cid
+		GROUP by a.id
+		ORDER by a.id
+		) c
+	</select>
+
+	<!-- 被邀请人明细 -->
+	<select id="customerbeInvitedlist"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+		b.id,
+		b.username,
+		b.create_time as "createTime",
+		a.username as "fromUsername",
+		b.invite_code as inviteCode,
+		b.status
+		FROM
+		<!-- ( select * from customer <if test="phoneN"!=null> where username = 
+			#{phoneN} </if> ) a -->
+		customer a
+
+		JOIN (
+		SELECT
+		id,
+		username,
+		create_time,
+		from_invite_cid,
+		status,
+		invite_code
+		FROM
+		customer
+		WHERE
+		(
+		from_invite_cid IS NOT NULL
+		and from_invite_cid != 0
+		)
+		AND (status = 1 or status = 0)
+		${ew.sqlSegment}
+		) b ON a.id = b.from_invite_cid
+		order by b.create_time
+	</select>
+	<!-- 被邀请人明细 -->
+	<select id="customerbeInvitedlistUseMap"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="map">
+		SELECT
+		b.id,
+		b.username,
+		b.create_time as "createTime",
+		a.username as "fromUsername",
+		b.invite_code as inviteCode,
+		b.status
+		FROM
+		(
+		select id,username from customer
+		where 1=1
+		<if test="phoneN !=null and ''!=phoneN">
+			And username = #{phoneN}
+		</if>
+
+		) a
+
+		JOIN (
+		SELECT
+		id,
+		username,
+		create_time,
+		from_invite_cid,
+		status,
+		invite_code
+		FROM
+		customer
+		WHERE
+		(
+		from_invite_cid IS NOT NULL
+		and from_invite_cid != 0
+		)
+		AND (status = 1 or status = 0)
+		<if test="beginT !=null and ''!=beginT">
+			and create_time &gt;= #{beginT}
+		</if>
+		<if test="endT !=null and ''!=endT">
+			and create_time &lt;= #{endT}
+		</if>
+		<if test="id !=null and ''!=id">
+			and id = #{id}
+		</if>
+		<if test="username !=null and ''!=username">
+			and username = #{username}
+		</if>
+		<if test="status !=null and ''!=status">
+			and status = #{status}
+		</if>
+		) b ON a.id = b.from_invite_cid
+		order by b.create_time
+	</select>
+
+	<!-- 成功发起邀请用户 -->
+	<select id="getCTCCountByDate"
+		parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity">
+		select count(id) as "sumInviteCount",
+		substring(date_add(create_time,interval 8 hour), 1, 10) AS voStrDate
+		from customer
+		where invite_count > 0
+		and create_time &gt;= #{paramMinDate} and create_time &lt;=
+		#{paramMaxDate}
+		group by voStrDate
+	</select>
+
+	<!-- 被邀请用户注册数 或者 被邀请用户登录数 -->
+	<select id="getCounts"
+		parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity">
+		SELECT
+		count(id) as "counts",
+		substring(date_add(create_time,interval 8 hour), 1, 10) AS voStrDate
+		FROM
+		customer
+		WHERE
+		from_invite_cid IS NOT NULL
+		and from_invite_cid != 0
+		and create_time &gt;= #{paramMinDate} and create_time &lt;=
+		#{paramMaxDate}
+		${sqlelement}
+		group by voStrDate
+	</select>
+
+	<!-- 矿场人数明细 -->
+	<select id="customerdetaillist"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+		id as id,
+		username as "username",
+		STATUS as status,
+		create_time as createTime
+		FROM customer
+		${ew.sqlSegment}
+		ORDER BY create_time desc
+	</select>
+
+	<!-- 矿场人数明细的统计 -->
+	<select id="customerdetaillistTotal"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select count(distinct id) as id from (
+		SELECT
+		id as id,
+		username as "username",
+		STATUS as status,
+		create_time as createTime
+		FROM customer
+		${ew.sqlSegment}
+		ORDER BY create_time desc
+		) a
+	</select>
+
+
+	<!-- CTC手机号白名单明细 -->
+	<select id="whiteCustomerList"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+		a.id as id,
+		a.username as username,
+		t.datatime as createTime
+		FROM
+		customer a
+		JOIN (
+		SELECT
+		cid,
+		min(create_time) AS "datatime"
+		FROM
+		add_white_customer
+		GROUP BY cid
+		) t ON a.id = t.cid
+		<where>
+			<if test="ew.entity.cid != null and ew.entity.cid != ''">
+				and a.id = #{ew.entity.cid}
+			</if>
+			<if test="ew.entity.paramMinDate != null">
+				and t.datatime &gt;= #{ew.entity.paramMinDate}
+			</if>
+			<if test="ew.entity.paramMaxDate != null">
+				and t.datatime &lt;= #{ew.entity.paramMaxDate}
+			</if>
+			<if test="ew.entity.username != null and ew.entity.username != ''">
+				and a.username = #{ew.entity.username}
+			</if>
+		</where>
+		ORDER BY t.datatime desc
+	</select>
+
+	<!-- CTC手机号白名单明细 -->
+	<select id="whiteCustomerListTotal"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select count(distinct id) as id from (
+
+		SELECT
+		a.id as id,
+		a.username as username,
+		t.datatime as createTime
+		FROM
+		customer a
+		JOIN (
+		SELECT
+		cid,
+		min(create_time) AS "datatime"
+		FROM
+		add_white_customer
+		GROUP BY cid
+		) t ON a.id = t.cid
+		<where>
+			<if test="ew.entity.cid != null and ew.entity.cid != ''">
+				and a.id = #{ew.entity.cid}
+			</if>
+			<if test="ew.entity.paramMinDate != null">
+				and t.datatime &gt;= #{ew.entity.paramMinDate}
+			</if>
+			<if test="ew.entity.paramMaxDate != null">
+				and t.datatime &lt;= #{ew.entity.paramMaxDate}
+			</if>
+			<if test="ew.entity.username != null and ew.entity.username != ''">
+				and a.username = #{ew.entity.username}
+			</if>
+		</where>
+		ORDER BY t.datatime desc
+		) a
+	</select>
+
+	<!-- 信用报告购买人数明细 -->
+	<select id="customerbuylist"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		SELECT
+		a.id as id,
+		a.username as username,
+		t.datatime as createTime
+		FROM
+		customer a
+		JOIN (
+		SELECT
+		cid,
+		min(create_time) AS "datatime"
+		FROM
+		ctc_csgj
+		GROUP BY cid
+		) t ON a.id = t.cid
+		<where>
+			<if test="ew.entity.paramMinDate != null">
+				t.datatime &gt;= #{ew.entity.paramMinDate}
+			</if>
+			<if test="ew.entity.paramMaxDate != null">
+				and t.datatime &lt;= #{ew.entity.paramMaxDate}
+			</if>
+			<if test="ew.entity.cid != null and ew.entity.cid != ''">
+				and a.id = #{ew.entity.cid}
+			</if>
+			<if test="ew.entity.username != null and ew.entity.username != ''">
+				and a.username = #{ew.entity.username}
+			</if>
+		</where>
+		ORDER BY t.datatime desc
+	</select>
+	<!-- 信用报告购买人数明细 的统计 -->
+	<select id="customerbuylistTotal"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select count(distinct id) as id from (
+
+		SELECT
+		a.id as id,
+		a.username as username,
+		t.datatime as createTime
+		FROM
+		customer a
+		JOIN (
+		SELECT
+		cid,
+		min(create_time) AS "datatime"
+		FROM
+		ctc_csgj
+		GROUP BY cid
+		) t ON a.id = t.cid
+		<where>
+			<if test="ew.entity.paramMinDate != null">
+				t.datatime &gt;= #{ew.entity.paramMinDate}
+			</if>
+			<if test="ew.entity.paramMaxDate != null">
+				and t.datatime &lt;= #{ew.entity.paramMaxDate}
+			</if>
+			<if test="ew.entity.cid != null and ew.entity.cid != ''">
+				and a.id = #{ew.entity.cid}
+			</if>
+			<if test="ew.entity.username != null and ew.entity.username != ''">
+				and a.username = #{ew.entity.username}
+			</if>
+		</where>
+		ORDER BY t.datatime desc
+		) a
+	</select>
+
+	<!-- 按照日期分组 开通矿场的手机号数量 -->
+	<select id="seletCustomerCount"
+		parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity"
+		resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+		SELECT
+		substring(
+		date_add(create_time, INTERVAL 8 HOUR),
+		1,
+		10
+		) AS voStrDate,
+		count(id) as customerCount
+		FROM
+		customer
+		WHERE
+		(STATUS = 1 OR STATUS = 0)
+		and create_time &gt;= #{paramMinDate} and create_time &lt;=
+		#{paramMaxDate}
+		GROUP BY
+		voStrDate
+	</select>
+
+
+	<!-- 用户总量 -->
+	<select id="selectCountCustomerNum"
+		resultType="java.lang.String">
+		SELECT
+		count(id) AS customerCount
+		FROM
+		customer
+		WHERE
+		(STATUS = 1 OR STATUS = 0)
+	</select>
+
+	<update id="updateRewardById"
+		parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity">
+		update customer set
+		invite_reward_count=#{inviteRewardCount},update_time=#{updateTime}
+		where id=#{id}
+	</update>
+
+	<select id="totalUserDetail" resultType = "map" parameterType="map">
+		select SUBSTRING(a.create_time, 1, 10) AS createTime ,count(`status`) as
+		count ,status from customer a
+		WHERE
+		create_time &gt;= #{beginDate} and create_time &lt; #{endDate}
+		GROUP BY status
+	</select>
+	
+	<select id="totalUserDetailDaySup" resultType = "map" parameterType = "map">
+	select count(*) as count, status from customer
+	where
+	1=1 
+	<if test="begin !=null and ''!=begin">
+	and create_time  &gt;= #{begin}
+	</if>
+	<if test="end !=null and ''!=end">
+	 and create_time &lt;#{end}
+	</if>
+	 group by status
+	
+	</select>
+</mapper>

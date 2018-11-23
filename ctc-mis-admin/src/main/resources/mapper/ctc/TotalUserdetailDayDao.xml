@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.TotalUserdetailDayDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.TotalUserdetailDayEntity" id="totalUserdetailDayMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="countRegister" column="count_register"/>
+        <result property="countLogin" column="count_login"/>
+        <result property="whiteUser" column="white_user"/>
+        <result property="compeleteUser" column="compelete_user"/>
+        <result property="compeleteTask" column="compelete_task"/>
+        <result property="completeMoney" column="complete_money"/>
+        <result property="extractUser" column="extract_user"/>
+        <result property="extractSuccessTime" column="extract_success_time"/>
+        <result property="amountCtc" column="amount_ctc"/>
+    </resultMap>
+	
+	<insert id="insertTotalUserDetail" parameterType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">
+	insert into total_userdetail_day (
+		create_time,count_register,count_login,white_user,compelete_user,
+		compelete_task,complete_money,extract_user,
+		extract_success_time,amount_ctc
+		)
+	 values 
+	 (
+	 #{voStrDate},#{customerRegister},#{customerLogin},#{whiteCustomerCount},#{completeCustomer},#{completeCount},#{completeMoney},#{withdrawCustomer},
+	 	#{withdrawNum},#{withdrawCtcNum}
+	 )
+	 
+	 
+	</insert>
+	
+	<select id="query" resultType="io.credittag.mis.modules.ctc.entity.TotalUserdetailDayEntity" parameterType="map">
+	select  create_time as createTime,count_register as countRegister, count_login as countLogin , white_user as whiteUser ,compelete_user as compeleteUser, 
+	compelete_task as compeleteTask, complete_money as completeMoney ,extract_user as extractUser, extract_success_time as extractSuccessTime,
+	amount_ctc as amountCtc
+	
+	from 
+	total_userdetail_day
+	where
+	 create_time &gt;=  #{begin} and create_time &lt; #{end}
+	 order by create_time desc
+    
+	</select>
+	<select id="total" resultType="io.credittag.mis.modules.ctc.entity.TotalUserdetailDayEntity" parameterType="map">
+	select sum(countRegister)  as countRegister,sum(countLogin) as countLogin, sum(whiteUser) as whiteUser,
+	sum(comeleteUser) as compeleteUser,sum(compeleteTask) as compeleteTask,sum(completeMoney) as completeMoney,
+	sum(extractUser) as extractUser,sum(extractSuccessTime) as extractSuccessTime,sum(amountCtc) amountCtc
+	from (
+	select  create_time as createTime,count_register as countRegister, count_login as countLogin , white_user as whiteUser ,compelete_user as comeleteUser, 
+	compelete_task as compeleteTask, complete_money as completeMoney ,extract_user as extractUser ,extract_success_time as extractSuccessTime,
+	amount_ctc as amountCtc
+	
+	from 
+	total_userdetail_day
+	where
+	 1=1
+    <if test="begin !=null and ''!=begin">
+   and  create_time  &gt;= #{begin}
+    </if>
+    <if test="end !=null and '' !=end">
+      and create_time &lt; #{end}
+    </if>
+	 ) a
+	</select>
+	<delete id="deleteBysametime" parameterType="map">
+	delete from total_userdetail_day where create_time = #{time}
+	</delete>
+
+</mapper>

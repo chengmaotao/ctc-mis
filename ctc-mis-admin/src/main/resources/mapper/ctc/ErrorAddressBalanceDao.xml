@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.ErrorAddressBalanceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.ErrorAddressBalanceEntity" id="errorAddressBalanceMap">
+        <result property="id" column="id"/>
+        <result property="performId" column="perform_id"/>
+        <result property="address" column="address"/>
+        <result property="rpcBalance" column="rpc_balance"/>
+        <result property="redisBalance" column="redis_balance"/>
+        <result property="coinType" column="coin_type"/>
+        <result property="createTime" column="create_time"/>
+        <result property="walletId" column="wallet_id"/>
+    </resultMap>
+    
+    <sql id="columnId">
+    	id as "id",
+    	perform_id as "performId",
+    	address as "address",
+    	rpc_balance as "rpcBalance",
+    	redis_balance as "redisBalance",
+    	coin_type as "coinType",
+    	create_time as "createTime",
+    	wallet_id as "walletId"
+    </sql>
+
+
+	<select id="getListByPerformId" parameterType="java.lang.Integer" resultType="io.credittag.mis.modules.ctc.entity.ErrorAddressBalanceEntity">
+		select 
+			<include refid="columnId"></include>
+		 from error_address_balance
+		where perform_id = #{performId}
+	</select>
+
+</mapper>

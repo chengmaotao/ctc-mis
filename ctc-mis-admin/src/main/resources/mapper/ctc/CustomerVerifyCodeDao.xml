@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.CustomerVerifyCodeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+	<resultMap
+		type="io.credittag.mis.modules.ctc.entity.CustomerVerifyCodeEntity"
+		id="customerWithdrawVerifyCodeMap">
+		<result property="id" column="id" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="cid" column="cid" />
+		<result property="userName" column="username" />
+		<result property="verifyCode" column="verify_code" />
+		<result property="expireTime" column="expire_time" />
+	</resultMap>
+	<sql id="sqlCoulmn">
+		a.id as "id",a.create_time as "createTime",a.update_time as
+		"updateTime",a.cid as "cid",a.verify_code as
+		"verifyCode",a.expire_time as "expireTime"
+	</sql>
+	<select id="getRecordByMobileWithDraw"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerVerifyCodeEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select
+		<include refid="sqlCoulmn"></include>
+		,
+		c.username as "username"
+		from customer_withdraw_verify_code a
+		join
+		customer c on
+		a.cid = c.id
+		${ew.sqlSegment}
+	</select>
+	<select id="getRecordByMobileRegister"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerVerifyCodeEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select
+		<include refid="sqlCoulmn"></include>
+		,
+		c.username as "username"
+		from customer_register_verify_code a
+		join
+		customer c on
+		a.cid = c.id
+		${ew.sqlSegment}
+	</select>
+	<select id="getRecordByMobileDl"
+		resultType="io.credittag.mis.modules.ctc.entity.CustomerVerifyCodeEntity"
+		parameterType="com.baomidou.mybatisplus.mapper.EntityWrapper">
+		select
+		<include refid="sqlCoulmn"></include>
+		,
+		c.username as "username"
+		from customer_verify_code a
+		join
+		customer c on
+		a.cid = c.id
+		${ew.sqlSegment}
+	</select>
+</mapper>

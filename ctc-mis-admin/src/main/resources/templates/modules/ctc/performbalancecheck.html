@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+		<#include "/header.html">
+</head>
+<body>
+<div id="rrapp">
+    <div v-show="showList">
+        <div class="grid-btn">
+
+            <a class="btn btn-default" id="performId">校验</a>
+
+			
+           <a class="btn btn-default" id="queryId">查询</a>
+           
+           
+           <input type="text" id="addressId" class="ctc-form-control" style="width: 350px" placeholder="地址" >
+           
+           <a class="btn btn-default" id="resertId">重置</a>
+	
+        </div>
+        <table id="jqGrid" border="1">
+        	<thead><tr style="height: 50px"><th style="width: 400px">地址</th><th style="width: 300px">链上余额</th><th style="width: 300px">缓存余额</th></tr></thead>
+        	<tbody id="addressErrorBalanceId">
+        		
+        	</tbody>
+        </table>
+    </div>
+</div>
+
+<script src="${request.contextPath}/statics/js/modules/ctc/performbalancecheck.js?_${.now?long}"></script>
+</body>
+</html>

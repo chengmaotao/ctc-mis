@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.credittag.mis.modules.ctc.dao.AddWhiteCustomerDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.credittag.mis.modules.ctc.entity.AddWhiteCustomerEntity" id="addWhiteCustomerMap">
+        <result property="id" column="id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="cid" column="cid"/>
+        <result property="target" column="target"/>
+        <result property="langueCode" column="langue_code"/>
+    </resultMap>
+
+	<!-- 白名单数  按照日期分组 -->
+	<select id="seletWhiteCustomerCount" parameterType="io.credittag.mis.modules.ctc.entity.CustomerEntity" resultType="io.credittag.mis.modules.ctc.entity.DbDataCountEntity">		
+			SELECT
+				count(t.cid) AS whiteCustomerCount,
+				substring(
+					date_add(t.mintime, INTERVAL 8 HOUR),
+					1,
+					10
+				) AS voStrDate
+			FROM
+				(
+					SELECT
+						cid,
+						min(create_time) AS mintime
+					FROM
+						add_white_customer
+					GROUP BY
+						cid
+				) t
+			where t.mintime &gt;= #{paramMinDate} and t.mintime &lt;=#{paramMaxDate}
+			GROUP BY
+				voStrDate
+			ORDER BY
+				voStrDate DESC
+	</select>
+	
+	<select id="sumWhiteUSererror" resultType = "map" parameterType = "map">
+	select count(distinct cid) as count from add_white_customer
+	where
+	1=1
+	<if test="begin !=null">
+	<!-- and create_time &gt;= #{begin} -->
+	<![CDATA[
+                and create_time >= #{begin}
+                ]]>
+	</if>
+	<if test="end !=null ">
+	<![CDATA[
+                and create_time < #{end}
+                ]]>
+	</if>
+	</select>
+	
+	<select id="sumWhiteUSer" resultType = "map" parameterType = "map">
+	select count(*) as count from (
+		select min(create_time) as createtime ,cid from add_white_customer
+		group by cid 
+	)  a where 
+	1=1
+	<if test="begin !=null">
+                and a.createtime &gt;= #{begin}
+	</if>
+	<if test="end !=null ">
+                and a.createtime &lt; #{end}
+	</if>
+	
+	</select>
+</mapper>
